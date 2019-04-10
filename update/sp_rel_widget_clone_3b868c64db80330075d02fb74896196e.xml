@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
+    <sp_rel_widget_clone action="INSERT_OR_UPDATE">
+        <child display_value="Ticket Fields Dev">bb8648e0db80330075d02fb7489619b1</child>
+        <cloned>2019-03-04 04:32:56</cloned>
+        <last_validated>2019-03-04 04:32:56</last_validated>
+        <parent display_value="Ticket Fields">5736bf52cb30020000f8d856634c9c2d</parent>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category&gt;standard&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[function ($scope, spUtil) {
+		
+	spUtil.recordWatch($scope, $scope.data.table, "sys_id=" + $scope.data.sys_id); 
+}]]&gt;&lt;/client_script&gt;&lt;controller_as/&gt;&lt;css&gt;.options-btn {
+    border:none;
+    background-image:none;
+    background-color:transparent;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+
+.ticket-fields {
+  margin-left: -7px;
+  margin-right: -8px;
+  -webkit-margin-before: 0;
+  -webkit-margin-after: 0;
+  
+  dt {
+    //font-weight: normal;
+    margin-bottom: 10px;
+  }
+  dd {
+    margin-bottom: 10px;
+  }
+}&lt;/css&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;false&lt;/has_preview&gt;&lt;id/&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link/&gt;&lt;name&gt;Ticket Fields&lt;/name&gt;&lt;option_schema&gt;[{"name":"pickup_msg","section":"Presentation","label":"Pickup message","type":"string"}]&lt;/option_schema&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function(){
+	data.pickupMsg = gs.getMessage(options.pickup_msg);
+	var gr = $sp.getRecord();
+	if (gr == null)
+		return;
+	
+	data.canRead = gr.canRead();
+	if (!data.canRead) 
+		return;
+
+	var agent = "";
+	var a = $sp.getField(gr, 'assigned_to');
+	if (a != null)
+		agent = a.display_value;
+
+	var fields = $sp.getFields(gr, 'number,state,priority,sys_created_on');
+	if (gr.getValue("sys_mod_count") &gt; 0)
+		fields.push($sp.getField(gr, 'sys_updated_on'));
+
+	if (gr.getValue('price') &gt; 0)
+		fields.push($sp.getField(gr, 'price'));
+	
+	if (gr.getValue('recurring_price') &gt; 0) {
+		var rp = $sp.getField(gr, 'recurring_price');
+		if (gr.isValidField("recurring_price"))
+			rp.display_value = rp.display_value + " " + gr.getDisplayValue("recurring_frequency");
+		fields.push(rp);
+	}
+	if (gr.isValidField("quantity"))
+		fields.push($sp.getField(gr, 'quantity'));
+
+	data.tableLabel = gr.getLabel();
+	data.fields = fields;
+	data.variables = $sp.getVariablesArray();
+	data.agent = agent;
+	data.agentPossible = gr.isValidField("assigned_to");
+	data.table = gr.getTableName();
+	data.sys_id = gr.getUniqueValue();
+})()
+
+]]&gt;&lt;/script&gt;&lt;servicenow&gt;true&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2015-06-24 18:04:43&lt;/sys_created_on&gt;&lt;sys_id&gt;5736bf52cb30020000f8d856634c9c2d&lt;/sys_id&gt;&lt;sys_mod_count&gt;166&lt;/sys_mod_count&gt;&lt;sys_name&gt;Ticket Fields&lt;/sys_name&gt;&lt;sys_package display_value="Service Portal - Core" source="com.glide.service-portal"&gt;1d2b2512bcc02300aadb875973a34b74&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_5736bf52cb30020000f8d856634c9c2d&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2018-02-01 22:08:32&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div ng-if="data.canRead" class="panel b"&gt;
+  &lt;div class="panel-heading bg-primary"&gt;
+    &lt;div ng-init="spSearch.targetRequests()"&gt;
+      &lt;sp-c-link target="form" table="data.table" id="data.sys_id"/&gt;
+    &lt;/div&gt;
+    &lt;h2 class="sr-only"&gt;${Ticket details}&lt;/h2&gt;
+    &lt;span ng-if="data.agent" &gt;
+      ${Agent working on this {{data.tableLabel}}}:
+      &lt;div&gt;{{data.agent}}&lt;/div&gt;
+    &lt;/span&gt;
+    &lt;span ng-if="!data.agent &amp;&amp; data.agentPossible" &gt;${Your request has been submitted}&lt;/span&gt;
+    &lt;span ng-if="!data.agentPossible"&gt;${{{data.tableLabel}} record details}&lt;/span&gt;
+  &lt;/div&gt;
+
+  &lt;div class="panel-body"&gt;
+    &lt;dl class="ticket-fields" ng-if="data.fields.length &gt; 0"&gt;
+        &lt;dt class= "col-md-6 col-sm-12 col-xs-6 break-word" 
+            ng-if="field.value &amp;&amp; (field.type != 'decimal' || field.type == 'decimal' &amp;&amp; field.value != 0)" 
+            ng-repeat-start="field in data.fields"&gt;{{field.label}}&lt;/dt&gt;
+        &lt;dd class= "col-md-6 col-sm-12 col-xs-6 break-word" 
+            ng-repeat-end ng-switch="field.type" 
+            ng-if="field.value &amp;&amp; (field.type != 'decimal' || field.type == 'decimal' &amp;&amp; field.value != 0)"&gt;
+          &lt;div ng-switch-when="glide_date_time" title="{{field.display_value}}"&gt;
+            &lt;sn-time-ago timestamp="::field.value" /&gt;
+          &lt;/div&gt;
+          &lt;div ng-switch-default &gt;{{field.display_value}}&lt;/div&gt;
+        &lt;/dd&gt;
+    &lt;/dl&gt;
+    &lt;div ng-if="data.variables.length &gt; 0" ng-init="c.variable_toggle = true"&gt;
+      &lt;button class="h4 options-btn" ng-click="c.variable_toggle = !c.variable_toggle" aria-expanded="{{c.variable_toggle}}" aria-controls="variables-toggle"&gt;
+        &lt;span style="font-size: 12px;" class="glyphicon" ng-class="c.variable_toggle ? 'glyphicon-chevron-down' : 'glyphicon-chevron-up'"&gt;&lt;/span&gt;
+        ${Options}
+      &lt;/button&gt;
+      
+      &lt;div ng-if="c.variable_toggle" id="variables-toggle" aria-hidden="{{!c.variable_toggle}}"&gt;
+        &lt;hr role="presentation"&gt;
+        &lt;div class="m-b break-word" ng-repeat="variable in data.variables | filter:{visible_summary:true}"&gt;
+          &lt;label class="m-n"&gt;{{variable.label}}&lt;/label&gt;
+          &lt;div&gt;{{variable.display_value}}&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div ng-if="data.agentPossible &amp;&amp; !data.agent &amp;&amp; options.pickup_msg" class="panel-footer"&gt;
+    &lt;div id="ticket_fields_footer" class="text-center text-muted" style="font-style: italic;" ng-bind-html="data.pickupMsg"&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload>
+        <sys_class_name>sp_rel_widget_clone</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2019-03-04 04:32:56</sys_created_on>
+        <sys_id>3b868c64db80330075d02fb74896196e</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>bb8648e0db80330075d02fb7489619b1</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sp_rel_widget_clone_3b868c64db80330075d02fb74896196e</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2019-03-04 04:32:56</sys_updated_on>
+    </sp_rel_widget_clone>
+</record_update>
